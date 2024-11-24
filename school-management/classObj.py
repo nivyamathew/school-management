@@ -202,30 +202,51 @@ get_student_with_lowest_marks()
 
 #15. Write a function to find and print the subject with the highest average marks.
 def get_student_with_highest_average_mark():
-  highest_average_mark = 0
-  highest_average_student = None
+  subject_totals = {}
+  subject_counts ={}
   for student in classObj["students"]:
-    total_mark_list =[mark["mark"] for mark in student["marks"]]
-    average_mark = sum(total_mark_list) / len(total_mark_list)
-    if average_mark > highest_average_mark:
-      highest_average_mark = average_mark
-      highest_average_student = student["name"]
-  print(highest_average_student)
+    for mark in student["marks"]:
+      subject = mark["subject"]
+      marks = mark["mark"]
+      if subject in subject_totals:
+        subject_totals[subject] += marks
+        subject_counts[subject] += 1
+      else:
+        subject_totals[subject] = marks
+        subject_counts[subject] = 1
+
+  subject_averages = {}
+  for subject in subject_totals:
+    average = subject_totals[subject] / subject_counts[subject]
+    subject_averages[subject] = average
+
+  subject_with_highest_average_mark = max(subject_averages, key=subject_averages.get)
+  print(subject_with_highest_average_mark)
 
 get_student_with_highest_average_mark()
 
 # 16.Write a function to find and print the subject with the lowest average marks.
 def get_student_with_lowest_average_mark():
-  lowest_average_mark = 1000
-  lowest_average_student = None
+  subject_totals = {}
+  subject_counts ={}
   for student in classObj["students"]:
-    total_mark_list =[mark["mark"] for mark in student["marks"]]
-    print(total_mark_list)
-    average_mark = sum(total_mark_list) / len(total_mark_list)
-    if average_mark < lowest_average_mark:
-      lowest_average_mark = average_mark
-      lowest_average_student = student["name"]
-  print(lowest_average_student)
+    for mark in student["marks"]:
+      subject = mark["subject"]
+      marks = mark["mark"]
+      if subject in subject_totals:
+        subject_totals[subject] += marks
+        subject_counts[subject] += 1
+      else:
+        subject_totals[subject] = marks
+        subject_counts[subject] = 1
+
+  subject_averages = {}
+  for subject in subject_totals:
+    average = subject_totals[subject] / subject_counts[subject]
+    subject_averages[subject] = average
+
+  subject_with_lowest_average_mark = min(subject_averages, key=subject_averages.get)
+  print(subject_with_lowest_average_mark)
 
 get_student_with_lowest_average_mark()
 
@@ -632,10 +653,214 @@ get_lowest_percentage_mark_for_a_subject("Mini SS")
 
 # 43. Write a function to find and print the subject(s) in which all students scored above a certain mark.
 
-# def get_subject_above_score(score):
-#   for student in classObj["students"]:
-#     for mark in student["marks"]:
-#       if mark["mark"] > score:
-#         print(mark["mark"])
+def get_subject_above_score(score):
+  student_and_subject_list = []
+  total_students_in_class = 0
+  subject_counts={}
+  for student in classObj["students"]:
+    total_students_in_class += 1
+    for mark in student["marks"]:
+      if(mark["mark"] > score):
+        student_and_subject_list.append({"student": student["name"], "subject": mark["subject"]})
 
-# get_subject_above_score(23)
+  for entry in student_and_subject_list:
+    subject = entry['subject']
+    if subject in subject_counts:
+        subject_counts[subject] += 1
+    else:
+        subject_counts[subject] = 1
+
+  subject_list = [subject for subject, count in subject_counts.items() if count == total_students_in_class]
+  print(subject_list)
+
+get_subject_above_score(20)
+
+# 44.Write a function to find and print the subject(s) in which all students scored below a certain mark.
+def get_subject_below_score(score):
+  student_and_subject_list = []
+  total_students_in_class = 0
+  subject_counts={}
+  for student in classObj["students"]:
+    total_students_in_class += 1
+    for mark in student["marks"]:
+      if(mark["mark"] < score):
+        student_and_subject_list.append({"student": student["name"], "subject": mark["subject"]})
+
+  for entry in student_and_subject_list:
+    subject = entry['subject']
+    if subject in subject_counts:
+        subject_counts[subject] += 1
+    else:
+        subject_counts[subject] = 1
+
+  subject_list = [subject for subject, count in subject_counts.items() if count == total_students_in_class]
+  print(subject_list)
+
+get_subject_below_score(48)
+
+# 45.Write a function to find and print the subject(s) in which the average marks of all students are above a certain mark.
+
+def get_subject_average_above_score(score):
+  average_marks_list =[]
+  student_and_subject_list=[]
+  subject_counts={}
+  total_students_in_class = 0
+
+  for students in classObj["students"]:
+    total_students_in_class +=1
+    student_name = students["name"]
+    total_marks = {}
+
+    for marks in students["marks"]:
+      subject = marks["subject"]
+      mark = marks["mark"]
+
+      if subject not in total_marks:
+        total_marks[subject] =[]
+      total_marks[subject].append(mark)
+
+    for subject, marks in total_marks.items():
+      average_marks = sum(marks) / len(marks)
+      average_mark_list = {"student": student_name, "subject" : subject, "mark": average_marks}
+      average_marks_list.append(average_mark_list)
+  
+
+  for mark_list in average_marks_list:
+    if(mark_list["mark"] > score):
+      student_and_subject_list.append({"student": mark_list["student"], "subject": mark_list["subject"]})
+
+  for data in student_and_subject_list:
+    subject = data['subject']
+    if subject in subject_counts:
+        subject_counts[subject] += 1
+    else:
+        subject_counts[subject] = 1
+
+  subject_list = [subject for subject, count in subject_counts.items() if count == total_students_in_class]
+  print(subject_list)  
+
+get_subject_average_above_score(20)
+
+# 46.Write a function to find and print the subject(s) in which the average marks of all students are below a certain mark.
+
+def get_subject_average_below_score(score):
+  average_marks_list =[]
+  student_and_subject_list=[]
+  subject_counts={}
+  total_students_in_class = 0
+
+  for students in classObj["students"]:
+    total_students_in_class +=1
+    student_name = students["name"]
+    total_marks = {}
+
+    for marks in students["marks"]:
+      subject = marks["subject"]
+      mark = marks["mark"]
+
+      if subject not in total_marks:
+        total_marks[subject] =[]
+      total_marks[subject].append(mark)
+
+    for subject, marks in total_marks.items():
+      average_marks = sum(marks) / len(marks)
+      average_mark_list = {"student": student_name, "subject" : subject, "mark": average_marks}
+      average_marks_list.append(average_mark_list)
+  
+
+  for mark_list in average_marks_list:
+    if(mark_list["mark"] < score):
+      student_and_subject_list.append({"student": mark_list["student"], "subject": mark_list["subject"]})
+
+  for data in student_and_subject_list:
+    subject = data['subject']
+    if subject in subject_counts:
+        subject_counts[subject] += 1
+    else:
+        subject_counts[subject] = 1
+
+  subject_list = [subject for subject, count in subject_counts.items() if count == total_students_in_class]
+  print(subject_list)  
+
+get_subject_average_below_score(20)
+
+
+
+# 47.Write a function to find and print the student(s) who scored the highest marks in at least one subject.
+def get_students_who_scored_highest_marks():
+  subject_highest = {}
+  for students in classObj["students"]:
+      for mark in students["marks"]:
+        subject = mark["subject"]
+        mark = mark["mark"]
+        student_name = students["name"]
+
+        if subject not in subject_highest:
+            subject_highest[subject] = {"student": student_name, "mark": mark}
+        else:
+            if mark > subject_highest[subject]["mark"]:
+                subject_highest[subject] = {"student": student_name, "mark": mark}
+
+  students_list = list(set(student["student"] for student in subject_highest.values()))
+  print(students_list)
+
+get_students_who_scored_highest_marks()
+
+# 48.Write a function to find and print the student(s) who scored the lowest marks in at least one subject.
+def get_students_who_scored_lowest_marks():
+  subject_lowest = {}
+  for students in classObj["students"]:
+      for mark in students["marks"]:
+        subject = mark["subject"]
+        mark = mark["mark"]
+        student_name = students["name"]
+
+        if subject not in subject_lowest:
+            subject_lowest[subject] = {"student": student_name, "mark": mark}
+        else:
+            if mark < subject_lowest[subject]["mark"]:
+                subject_lowest[subject] = {"student": student_name, "mark": mark}
+
+  students_list = list(set(student["student"] for student in subject_lowest.values()))
+  print(students_list)
+
+get_students_who_scored_lowest_marks()
+
+# 49.Write a function to calculate and print the average marks for each student in each subject.
+def get_average_mark_in_each_subject():
+  for students in classObj["students"]:
+    student_name = students["name"]
+    total_marks = {}
+
+    for marks in students["marks"]:
+      subject = marks["subject"]
+      mark = marks["mark"]
+
+      if subject not in total_marks:
+        total_marks[subject] =[]
+      total_marks[subject].append(mark)
+
+    for subject, marks in total_marks.items():
+      average_marks = sum(marks) / len(marks) 
+      print(f"{student_name} - {subject}: {average_marks}")
+
+get_average_mark_in_each_subject()
+
+# 50. Write a function to calculate and print the total marks for each student in each subject.
+def get_total_mark_in_each_subject():
+  for students in classObj["students"]:
+    student_name = students["name"]
+    total_marks = {}
+
+    for marks in students["marks"]:
+      subject = marks["subject"]
+      mark = marks["mark"]
+
+      if subject not in total_marks:
+        total_marks[subject] =[]
+      total_marks[subject].append(mark)
+
+    for subject, marks in total_marks.items():
+      print(f"{student_name} - {subject}: {sum(marks)}")
+
+get_total_mark_in_each_subject()
