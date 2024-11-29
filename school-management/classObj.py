@@ -1,4 +1,3 @@
-# SCHOOL Management
 classObj ={
   "name": "class A",
   "teacherName": "Mary",
